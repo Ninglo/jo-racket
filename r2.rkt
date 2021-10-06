@@ -9,4 +9,4 @@
 
 
 (define (r2 expr)
-    (interp expr (polyfill env0)))
+    (interp expr poly-env))

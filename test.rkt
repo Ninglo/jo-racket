@@ -5,11 +5,16 @@
 
 (define test-list
     (list
-        (cons 1 '(- 3 2))
-        (cons 1 '(if #t 1 2))
+        (cons 1  '(- 3 2))
+        (cons #t '(not #f))
+        (cons #t '(or #t #f))
+        (cons #f '(and #t #f))
+        (cons 1  '(if #t 1 2))
         (cons 14 '(* 2 (+ 3 4)))
+        (cons 1  '(car (cons 1 2)))
+        (cons 2  '(cdr (cons 1 2)))
         (cons 21 '(* (+ 1 2) (+ 3 4)))
-        (cons 6 '((lambda (x) (* 2 x)) 3))
+        (cons 6  '((lambda (x) (* 2 x)) 3))
         (cons 6 
             '(let ([f (lambda (x y) (* x y))])
                 (f 2 3)))
@@ -46,7 +51,7 @@
 (for-each (lambda (p)
     (let ([ans (car p)]
           [res (r2 (cdr p))])
-        (if (= ans res)
+        (if (equal? ans res)
             #t
             (printf "error, ~a and ~a are not equal!" ans (cdr p)))))
     test-list)
