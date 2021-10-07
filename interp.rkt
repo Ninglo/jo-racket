@@ -1,17 +1,10 @@
 #lang racket
 
-(struct Closure (f env))
+(provide interp)
 
-(define env0 '())
+(require "const.rkt")
+(require "env.rkt")
 
-(define (ext-env x v env)
-    (cons `(,x . ,v) env))
-
-(define (lookup x env)
-    (let ([p (assq x env)])
-        (cond
-            [(not p) (error "no v!" x)]
-            [else (cdr p)])))
 
 (define (concat-env env)
     (lambda (expr prev)
@@ -35,7 +28,6 @@
                         env-save
                         nargs
                         vargs)))])))
-
 
 (define (interp expr env)
     (match expr
@@ -65,79 +57,3 @@
                     ['/ (apply / vargs)]
                     ['= (= (car vargs) (car (cdr vargs)))]
                     [else (call ef vargs env)]))]))
-
-(define polifill
-    (ext-env
-        'or
-        (Closure
-            '(lambda (x y) 
-                (if x x y))
-            env0)
-        env0))
-
-(define (r2 expr)
-    (interp expr polifill))
-
-
-; (r2 '(- 3 2))
-; ;; => 1
-
-; (r2 '(* 2 3))
-; ;; => 6
-
-; (r2 '(* 2 (+ 3 4)))
-; ;; => 14
-
-; (r2 '(* (+ 1 2) (+ 3 4)))
-; ;; => 21
-
-; (r2 '((lambda (x) (* 2 x)) 3))
-; ;; => 6
-
-; (r2
-; '(let ([z 3] [f (lambda (a b) (* a b))])
-;    (let ([f (lambda (x y) (* x y))])
-;     (+ 4 z))))
-; ; => 7
-
-; (r2
-; '(if #t
-;     1
-;     2))
-; ;; => 1
-
-; (r2
-; '(let ([f (lambda (x y) (* x y))])
-;     (f 2 3)))
-; ;; => 6
-
-(r2
-'(let (
-    [mkfib (lambda (self) (lambda (n)
-        (if (or (= n 1) (= n 2))
-            1
-            (+  ((self self) (- n 1)) 
-                ((self self) (- n 2))))))])
-    ((mkfib mkfib) 3)))
-;; => 2
-
-(r2
-'(let (
-    [fib (lambda (n)
-        (if (= n 1)
-            1
-            (if (= n 2)
-                1
-                (+  (fib (- n 1)) 
-                    (fib (- n 2))))))])
-    (fib 5)))
-;; => 5
-
-(r2
-'(let (
-    [fib-tail (lambda (n prev curt)
-        (if (or (= n 1) (= n 2))
-            curt
-            (fib-tail (- n 1) curt (+ prev curt))))])
-    (fib-tail 10 1 1)))
-;; => 55
