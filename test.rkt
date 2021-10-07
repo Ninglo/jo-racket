@@ -1,6 +1,6 @@
 #lang racket
 
-(require "r2.rkt")
+(require "lambda.rkt")
 
 
 (define test-list
@@ -50,7 +50,7 @@
 
 (for-each (lambda (p)
     (let ([ans (car p)]
-          [res (r2 (cdr p))])
+          [res (λ (cdr p))])
         (if (equal? ans res)
             #t
             (printf "error, ~a and ~a are not equal!" ans (cdr p)))))

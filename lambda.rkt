@@ -1,6 +1,6 @@
 #lang racket
 
-(provide r2)
+(provide λ)
 
 (require "const.rkt")
 (require "env.rkt")
@@ -8,5 +8,5 @@
 (require "interp.rkt")
 
 
-(define (r2 expr)
+(define (λ expr)
     (interp expr poly-env))
